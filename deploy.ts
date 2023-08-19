@@ -1,16 +1,16 @@
-const ethers = require('ethers');
-const fs = require('fs-extra');
-require('dotenv').config();
+import { ethers } from 'ethers';
+import fs from 'fs-extra';
+import 'dotenv/config';
 
 async function main() {
 	// compile them in our code
 	// compile them separately
 	// http://127.0.0.1:7545
-	const provider = new ethers.JsonRpcProvider(process.env.API_URL);
+	const provider = new ethers.JsonRpcProvider(process.env.API_URL!);
 	const encryptJson = fs.readFileSync('./.encryptedKey.json', 'utf8');
 	let wallet = await ethers.Wallet.fromEncryptedJson(
 		encryptJson,
-		process.env.PRIVATE_KEY_PASSWORD
+		process.env.PRIVATE_KEY_PASSWORD!
 	);
 	wallet = wallet.connect(provider);
 	const abi = fs.readFileSync(
@@ -24,9 +24,9 @@ async function main() {
 
 	const contractFactory = new ethers.ContractFactory(abi, binary, wallet);
 	console.log('Deploying, please wait...');
-	const contract = await contractFactory.deploy();
+	const contract: any = await contractFactory.deploy();
 	// const contract = await contractFactory.deploy({ gasPrice: 1e10 });
-	const deploymentReceipt = await contract.deploymentTransaction().wait(1);
+	const deploymentReceipt = await contract.deploymentTransaction()!.wait(1);
 	console.log(`Contract deployed to `, contract.target);
 	// console.log("Here is the transaction:")
 	// console.log(contract.deployTransaction)
